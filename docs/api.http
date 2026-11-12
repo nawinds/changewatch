@@ -1,0 +1,63 @@
+@base = http://localhost:8080
+@token = REPLACE_WITH_TOKEN
+@spreadsheetId = REPLACE_WITH_SPREADSHEET_ID
+@sourceId = REPLACE_WITH_SOURCE_ID
+@monitorId = REPLACE_WITH_MONITOR_ID
+
+### Health (без авторизации)
+GET {{base}}/actuator/health
+
+### Создать аккаунт; сохранить token из ответа
+POST {{base}}/api/v1/accounts
+Content-Type: application/json
+
+{"name":"Никита"}
+
+### Текущий аккаунт
+GET {{base}}/api/v1/me
+Authorization: Bearer {{token}}
+
+### Подключить публичную таблицу
+POST {{base}}/api/v1/sources
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{"spreadsheetId":"{{spreadsheetId}}","sheetId":0,"intervalSeconds":30}
+
+### Состояние источника
+GET {{base}}/api/v1/sources/{{sourceId}}
+Authorization: Bearer {{token}}
+
+### Подписаться на свои баллы
+POST {{base}}/api/v1/monitors
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{"sourceId":"{{sourceId}}","name":"Мои баллы","rowKey":"Студент","rowValue":"Никита","columns":["Lab 1","Lab 2"],"rule":"ANY_CHANGE"}
+
+### Мониторы
+GET {{base}}/api/v1/monitors?limit=50&offset=0
+Authorization: Bearer {{token}}
+
+### Текущие значения и ошибка селектора
+GET {{base}}/api/v1/monitors/{{monitorId}}
+Authorization: Bearer {{token}}
+
+### История всех изменений
+GET {{base}}/api/v1/monitors/{{monitorId}}/changes?limit=50&offset=0
+Authorization: Bearer {{token}}
+
+### Только изменения, удовлетворяющие правилу
+GET {{base}}/api/v1/monitors/{{monitorId}}/changes?matchedOnly=true
+Authorization: Bearer {{token}}
+
+### Пауза; для возобновления active=true
+PATCH {{base}}/api/v1/monitors/{{monitorId}}
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{"active":false}
+
+### Удалить подписку и её историю
+DELETE {{base}}/api/v1/monitors/{{monitorId}}
+Authorization: Bearer {{token}}

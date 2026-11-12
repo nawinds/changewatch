@@ -1,0 +1,34 @@
+server:
+  port: ${PORT:8080}
+  error:
+    include-message: never
+spring:
+  datasource:
+    url: ${DATABASE_URL:jdbc:postgresql://localhost:5432/changewatch}
+    username: ${DATABASE_USER:changewatch}
+    password: ${DATABASE_PASSWORD}
+    hikari:
+      maximum-pool-size: 10
+      connection-timeout: 5000
+  jackson:
+    deserialization:
+      fail-on-unknown-properties: true
+      fail-on-null-for-primitives: true
+  mvc:
+    problemdetails:
+      enabled: true
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      show-details: never
+changewatch:
+  scheduler:
+    enabled: ${SCHEDULER_ENABLED:true}
+    delay-ms: ${SCHEDULER_DELAY_MS:5000}
+logging:
+  level:
+    live.changewatch: ${LOG_LEVEL:INFO}
